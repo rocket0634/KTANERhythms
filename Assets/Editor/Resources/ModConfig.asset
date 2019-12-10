@@ -13,5 +13,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: MusicRhythms
   title: Rhythms
-  version: 1.1
+  author: Trainzack
+  description: "[This is a reupload of Rhythms. If you subscribe to this version,
+    please make sure to unsubscribe from the original version: https://steamcommunity.com/sharedfiles/filedetails/?id=877905209]\n\n[i]Have
+    you ever taken a music theory class where you had to count and clap rhythms? This
+    is just like that, only here your suffering ends when you get it wrong.\r[/i]\n\r\n[h1]About[/h1]\r\n\r\nCount
+    the rhythm of the flashing light, and hit the correct button (or hold it if necessary).\r\n\r\nThe
+    ID of this module is MusicRhythms.\r\n\r\n[h1]Manual Pages\r[/h1]\n\r\n[url=ktane.timwi.de/HTML/Rhythms.html]HTML[/url]\n\r\nThe
+    original GitHub page for this module can be found [url=https://github.com/Trainzack/KTANERhythms]here[/url].\r\n\r\n\r\n[h1]Issues:[/h1]\r\n\r\nPlease
+    post any issues to the [url=https://github.com/rocket0634/KTANERhythms/issues]github
+    tracker[/url]."
+  version: 1.2
   outputFolder: build
+  previewImage: {fileID: 2800000, guid: 1802b3f7f4e93c944aeb813fdf47bac9, type: 3}
