@@ -45,7 +45,7 @@ public class Rhythms : MonoBehaviour
     // This is the first button press the player needs to make
     // _solutionStep1[rhythm][color]
     // x % 4 = button to press; x / 4 = instruction: 0=press, 1=hold 1 beep, etc.; -1=nothing (pass automatically); -2=“mash buttons”
-    private static readonly int[][] _solutionStep1 = newArray(
+    private int[][] _solutionStep1 = newArray(
         new int[] { 8, -2, 11, 10 },
         new int[] { 4, 1, 2, 6 },
         new int[] { 6, 5, 0, 3 },
@@ -53,7 +53,7 @@ public class Rhythms : MonoBehaviour
         new int[] { 5, 3, 4, 3 },
         new int[] { 4, 1, 2, 2 },
         new int[] { 0, 2, 3, 1 });
-    private static readonly int[][] _solutionStep2 = newArray(
+    private int[][] _solutionStep2 = newArray(
         new int[] { 1, -1, 1, 1 },
         new int[] { 3, 0, 5, 7 },
         new int[] { 1, 6, 3, 7 },
