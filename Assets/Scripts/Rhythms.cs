@@ -14,6 +14,9 @@ public class Rhythms : MonoBehaviour
     public Material lightOffMaterial;
     public TextMesh colorblindText;
     public KMColorblindMode ColorblindMode;
+    [HideInInspector]
+    //Let Souvenir know that the module has solved
+    public bool isSolved = false;
 
     static int _moduleIdCounter = 1;
     int _moduleId;
@@ -385,6 +388,7 @@ public class Rhythms : MonoBehaviour
         _active = false;
         _lightsBlinking = false;
         lightOff();
+        isSolved = true;
         SetColorblindText();
         stopBeep();
     }
