@@ -70,6 +70,8 @@ public class Rhythms : MonoBehaviour
     private bool _colorblind = false;
     private int _rhythm;
     private int _lightColor;
+    //Souvenir was originally programmed with with this variable, so add it back in
+    private int lightColor;
     private int _correctButton;
     private int _correctAction;
     private int _tempo = 95;    // This will be varied per module, and also slightly speed up after strikes
@@ -201,6 +203,7 @@ public class Rhythms : MonoBehaviour
     {
         _rhythm = Random.Range(0, _rhythms.Length);
         _lightColor = Random.Range(0, _colors.Length);
+        lightColor = _lightColor;
         blinkSprite.color = _colors[_lightColor];
 
         _tempo += Random.Range(1, 7);//Pacing, and prevent nearby patterns matching each other.
