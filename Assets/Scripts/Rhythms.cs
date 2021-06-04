@@ -475,12 +475,9 @@ public class Rhythms : MonoBehaviour
 
     public IEnumerator ProcessTwitchCommand(string command)
     {
-        if (Regex.IsMatch(command, @"^\s*colorblind\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        if (Regex.IsMatch(command, @"^\s*colo(?:u|)rblind|cb\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
         {
-            if (_colorblind)
-                _colorblind = false;
-            else
-                _colorblind = true;
+            _colorblind = !_colorblind;
             SetColorblindText();
             yield return null;
             yield break;
