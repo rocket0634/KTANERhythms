@@ -83,6 +83,7 @@ public class Rhythms : MonoBehaviour
     private int _selectedButton = 0;
     private bool _buttonIsPhysicallyHeld = false;
     private bool _buttonIsMetaphoricallyHeld = false;
+    private float _timePassed = 0f;
     KMAudio.KMAudioRef _beepAudio;
     KMSelectable[] _twitchPlaysButtons;
 
@@ -194,7 +195,7 @@ public class Rhythms : MonoBehaviour
         {
             _correctButton = solution % 4;
             _correctAction = solution / 4;
-            LogMessage("Correct action for stage " + _step + ": press the button labled " + _labels[_correctButton] + " for " + _correctAction + " beep(s)");
+            LogMessage("Correct action for stage " + _step + ": press the button labeled " + _labels[_correctButton] + " for " + _correctAction + " beep(s)");
         }
         SetColorblindText();
     }
@@ -247,8 +248,9 @@ public class Rhythms : MonoBehaviour
 
         if (_active)
         {
-            GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.BigButtonPress, transform);
+            GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.BigButtonPress, buttons[button].transform);
             _buttonIsMetaphoricallyHeld = true;
+            StartCoroutine(timeWhileBeeping());
             if (_correctAction == -2)
             {
                 if (_timesPressed == 0)
@@ -293,13 +295,14 @@ public class Rhythms : MonoBehaviour
         if (_buttonIsPhysicallyHeld)
         {
             StartCoroutine(MoveButton(false, _selectedButton));
-            GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.BigButtonRelease, transform);
+            GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.BigButtonRelease, buttons[_selectedButton].transform);
             _buttonIsPhysicallyHeld = false;
         }
         if (_buttonIsMetaphoricallyHeld)
         {//No releasing buttons when they aren't held
 
             _buttonIsMetaphoricallyHeld = false;
+            _timePassed = 0f;
             string message = "Button labeled " + _labels[_selectedButton] + " pressed and released";
             if (_correctAction == -2)
             {//For RAPID BUTTON PRESSES
@@ -370,7 +373,15 @@ public class Rhythms : MonoBehaviour
             stopBeep();
             _beepAudio = GetComponent<KMAudio>().PlaySoundAtTransformWithRef("HoldChirp", transform);
             yield return new WaitForSeconds(beepLength);
+        }
+    }
 
+    IEnumerator timeWhileBeeping()
+    {
+        while (_buttonIsMetaphoricallyHeld)
+        {
+            yield return null;
+            _timePassed += Time.deltaTime;
         }
     }
 
@@ -466,7 +477,10 @@ public class Rhythms : MonoBehaviour
     {
         if (Regex.IsMatch(command, @"^\s*colorblind\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
         {
-            _colorblind = true;
+            if (_colorblind)
+                _colorblind = false;
+            else
+                _colorblind = true;
             SetColorblindText();
             yield return null;
             yield break;
@@ -549,6 +563,49 @@ public class Rhythms : MonoBehaviour
         yield return selectedButton;
         yield return new WaitForSeconds(duration);
         yield return selectedButton;
+    }
+
+    public IEnumerator TwitchHandleForcedSolve()
+    {
+        LogMessage("Module autosolve requested by Twitch.");
+        while (!_active) yield return true;
+        if ((_buttonIsPhysicallyHeld && (_selectedButton != _correctButton || _beepsPlayed > _correctAction)) || (_correctAction == -2 && Time.time - _lastTimePressed > buttonMashTime && (_timesPressed != 0 || _buttonIsPhysicallyHeld)))
+        {
+            StopAllCoroutines();
+            StartCoroutine(MoveButton(false, _selectedButton));
+            GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.BigButtonRelease, buttons[_selectedButton].transform);
+            _buttonIsPhysicallyHeld = false;
+            Pass();
+            yield break;
+        }
+        if (_correctAction != -2)
+        {
+            int start = _step;
+            for (int i = start; i < 3; i++)
+            {
+                if (!_buttonIsPhysicallyHeld)
+                {
+                    buttons[_correctButton].OnInteract();
+                    yield return new WaitForSeconds(0.1f);
+                }
+                while (_timePassed < (_correctAction * beepLength)) yield return null;
+                buttons[_selectedButton].OnInteractEnded();
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
+        else
+        {
+            int start = _timesPressed;
+            for (int i = start; i < _timesNeeded; i++)
+            {
+                if (!_buttonIsPhysicallyHeld)
+                {
+                    buttons[Random.Range(0, 4)].OnInteract();
+                    yield return new WaitForSeconds(0.1f);
+                }
+                buttons[_selectedButton].OnInteractEnded();
+            }
+        }
     }
 }
 
